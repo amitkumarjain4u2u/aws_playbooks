@@ -1,0 +1,6 @@
+---
+# vars file for aws-httpd-vpc-elb
+application: httpd
+machine_counts: 3
+region: us-east-1
+

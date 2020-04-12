@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  roles: 
+    - aws-httpd-vpc
+    
+- import_playbook: aws-setup.yml
+
+- import_playbook: install_httpd.yml
+
+- hosts: localhost
+  roles:
+    - aws-httpd-vpc-elb

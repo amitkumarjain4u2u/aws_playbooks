@@ -1,0 +1,5 @@
+---
+# vars file for aws-nginx-elb
+application: nginx
+machine_counts: 3
+region: us-east-1

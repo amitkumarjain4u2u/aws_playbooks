@@ -1,0 +1,88 @@
+- hosts: ec2_instance_ips
+  remote_user: ec2-user
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: false
+  vars:
+    passwd: ansible
+    usr: ansible
+  tasks:
+    - user:
+       name: "{{ usr }}"
+       state: present
+       groups: wheel
+       password: "{{ passwd | password_hash('sha512') }}"
+       update_password: on_create
+
+    - copy:
+        content: "{{ usr }} ALL=(ALL)  NOPASSWD: ALL"
+        dest: "/etc/sudoers.d/{{ usr }}"
+
+    - openssh_keypair:
+        path: /home/ansible/.ssh/id_rsa
+      delegate_to: localhost
+      run_once: true
+
+    - authorized_key:
+        user: "{{ usr }}"
+        state: present
+        key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
+
+    - copy:
+        src: /home/ansible/.ssh/id_rsa
+        dest: "/home/{{ usr }}/.ssh/id_rsa"
+        owner: "{{ usr }}"
+        group: "{{ usr }}"
+        mode: 0600
+    - name: installing vim on managed nodes
+      yum:
+        name: vim
+        state: latest
+    - name: starting sshd services
+      service:
+        name: sshd
+        state: restarted
+        enabled: yes
+    - name: Enabling password autentication yes for ssh
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication '
+        line: PasswordAuthentication yes
+    - name: starting sshd services
+      service:
+        name: sshd
+        state: restarted
+        enabled: yes
+    - name: installing python
+      yum:
+        name: python2
+        state: latest
+    - name: installing python
+      yum:
+        name: python3
+        state: latest
+    - name: Check for Python
+      raw: test -e /usr/bin/python
+      changed_when: false
+      failed_when: false
+      register: check_python
+    - debug:
+        var: check_python
+    - name: Check for Python2
+      raw: test -e /usr/bin/python2
+      changed_when: false
+      failed_when: false
+      register: check_python2
+    - debug:
+        var: check_python2
+
+    - name: Check for Python3
+      raw: test -e /usr/bin/python3
+      changed_when: false
+      failed_when: false
+      register: check_python3
+    - debug:
+        var: check_python3
+    - ping:
+

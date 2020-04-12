@@ -1,0 +1,34 @@
+---
+# vars file for aws-httpd-vpc
+ansible_python_interpreter: /usr/bin/python3
+application: httpd
+machine_counts: 3
+region: us-east-1
+keypair_name: ec2_key_pair
+cal: "ami-00fc224d9834053d6"
+ore: "ami-087c2c50437d0b80d"
+mum: "ami-0a74bfeb190bd404f"
+verg: "ami-0c322300a1dd5dc79"
+ec2_key_directory_ansible: "/home/ansible/pdauto/"
+keyowner: ansible
+
+# VPC
+vpc_cidr: 10.10.0.0/24
+vpc_name: "Ansible VPC3"
+
+# Subnet
+subnet_name: "Ansible Subnet"
+subnet_cidr: 10.10.0.0/26
+
+igw_name: "Traffic IGW"
+
+
+#route table name
+route_name: "Public Ansible"
+
+securitygroup_name: "Ansible Security Group"
+
+ec2_tag: "WebServer"
+
+
+
