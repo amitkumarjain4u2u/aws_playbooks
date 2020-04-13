@@ -1,0 +1,20 @@
+---
+# vars file for ec2-down
+region: us-east-1
+keypair_name: ec2_key_pair
+keyowner: ansible
+ansible_python_interpreter: /usr/bin/python3
+application: 
+  - httpd
+  - nginx
+vpc_name: "Ansible VPC3"
+vpc_cidr: 10.10.0.0/24
+securitygroup_name: "Web DMZ"
+securitygroup_desc: "DMZ Security Group"
+#route table name
+route_name: "Public Ansible"
+igw_name: "Traffic IGW"
+vpciddelete: vpc-0afb48faf8f9cd4b8
+# Subnet
+subnet_name: "Ansible Subnet"
+subnet_cidr: 10.10.0.0/26
