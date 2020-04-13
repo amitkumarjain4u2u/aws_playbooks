@@ -36,11 +36,22 @@
 - debug:
     var: vpcid
 - debug: 
-    var: vpcid.vpc_id
+    var: vpcid.ansible_facts.vpc_id
 
 - debug:
     var: vpc.vpc.id
-    
+- debug: 
+    var: vpc.vpc.id
+
+- debug: 
+    var: vpc.vpc.cidr_block
+
+- debug: 
+    var: vpc.vpc.cidr_block_association_set[0].association_id
+
+- debug: 
+    var: vpc.vpc.tags.Name
+
 - name: associate subnet to the VPC
   ec2_vpc_subnet:
     state: present
@@ -60,6 +71,19 @@
 - debug: 
     var: subnet.subnet.vpc_id
 
+- debug: 
+    var: subnet.subnet.cidr_block
+
+- debug: 
+    var: subnet.subnet.id
+
+- debug: 
+    var: subnet.subnet.tags.Name
+
+- debug: 
+    var: subnet.subnet.vpc_id
+
+
 - name: create IGW
   ec2_vpc_igw:
     vpc_id: "{{ vpc_id }}"
@@ -73,6 +97,15 @@
     var: igw
 - debug: 
     var: igw.vpc_id
+- debug: 
+    var: igw.gateway_id
+
+- debug: 
+    var: igw.tags.Name
+
+- debug: 
+    var: igw.vpc_id
+
 
 - name: Route IGW
   ec2_vpc_route_table:
@@ -89,6 +122,41 @@
 
 - debug:
     var: rigw
+
+- debug: 
+    var: rigw.route_table.associations[0].route_table_association_id
+
+- debug: 
+    var: rigw.route_table.associations[0].route_table_id
+
+- debug: 
+    var: rigw.route_table.associations[0].subnet_id
+
+- debug:
+    var:  rigw.route_table.id
+
+- debug:
+    var:  rigw.route_table.route_table_id
+
+- debug:
+    var:  rigw.route_table.routes[0].destination_cidr_block
+
+- debug:
+    var:  rigw.route_table.routes[0].gateway_id
+
+- debug:
+    var:  rigw.route_table.routes[1].destination_cidr_block
+
+- debug:
+    var:  rigw.route_table.routes[1].gateway_id
+
+- debug: 
+    var: rigw.route_table.tags.Name
+
+- debug: 
+    var: rigw.route_table.vpc_id
+
+
 
 - name: Create Security Group
   ec2_group:
@@ -151,7 +219,34 @@
     var: elb.elb.name
 - debug:
     var: elb.elb.security_group_ids
-
+- debug: 
+    var: elb.elb.dns_name
+- debug: 
+    var: elb.elb.instance_health[0].instance_id
+- debug: 
+    var: elb.elb.instance_health[0].state
+- debug: 
+    var: elb.elb.instance_health[1].instance_id
+- debug: 
+    var: elb.elb.instance_health[1].state
+- debug: 
+    var: elb.elb.instance_health[2].instance_id
+- debug: 
+    var: elb.elb.instance_health[2].state 
+    
+- debug:
+    var: elb.elb.instances[0]
+- debug:
+    var: elb.elb.instances[1]
+- debug:
+    var: elb.elb.instances[2]
+- debug:
+    var: elb.elb.scheme
+- debug:
+    var: elb.elb.subnets
+- debug:
+    var: elb.elb.zones
+   
 
 - name: create a new ec2 key pair, returns generated private key
   ec2_key:
@@ -173,8 +268,12 @@
 - name: Copy EC2 Key Pair private key locally
   copy: content="{{ keypair.key.private_key }}" dest={{ ec2_key_directory_ansible }}ec2_key_pair.ppk owner="{{ keyowner }}" group="{{ keyowner }}" mode=0400
   when: keypair.changed == true
+  register: key1
   tags:
     - ec2_key
+- debug: 
+    var: key1
+
 
 - debug: 
     msg: "KEY ALREADY EXISTS"
@@ -187,8 +286,12 @@
 - name: Copy EC2 Key Pair private key locally
   copy: content="{{ keypair.key.private_key }}" dest={{ ec2_key_directory_ansible }}ec2_key_pair.pem owner="{{ keyowner }}" group="{{ keyowner }}" mode=0400
   when: keypair.changed == true
+  register: key2
   tags:
     - ec2_key
+- debug:
+    var: key2
+
 - debug:
     msg: "KEY ALREADY EXISTS"
   when: keypair.msg == "key pair already exists"
@@ -199,8 +302,12 @@
 - name: Copy EC2 Key Pair private key locally
   copy: content="{{ keypair.key.private_key }}" dest="{{ ec2_key_directory_ansible }}ec2_key_pair.ppk" owner="{{ keyowner }}" group="{{ keyowner }}" mode=0400
   when: keypair.changed == true
+  register: key3
   tags:
     - ec2_key
+- debug:
+    var: key3
+
 
 - debug:
     msg: "KEY ALREADY EXISTS"
@@ -213,8 +320,14 @@
 - name: Copy EC2 Key Pair private key locally
   copy: content="{{ keypair.key.private_key }}" dest="{{ ec2_key_directory_ansible }}ec2_key_pair.pem" owner="{{ keyowner }}" group="{{ keyowner }}" mode=0400
   when: keypair.changed == true
+
+  register: key4
   tags:
     - ec2_key
+- debug:
+    var: key4
+
+
 - debug:
     msg: "KEY ALREADY EXISTS"
   when: keypair.msg == "key pair already exists"
