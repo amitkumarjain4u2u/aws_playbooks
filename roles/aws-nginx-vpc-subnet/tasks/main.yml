@@ -1,5 +1,5 @@
 ---
-# tasks file for aws-httpd-vpc-subnet
+# tasks file for aws-nginx-vpc-subnet
 - name: Get my current IP address
   uri:
     url: http://checkip.amazonaws.com/
@@ -9,7 +9,7 @@
 - debug:
     var: my_ip
 
-- debug: 
+- debug:
     var: my_ip.content
 - pip:
     name: boto
@@ -35,12 +35,12 @@
 
 - debug:
     var: vpcid
-- debug: 
+- debug:
     var: vpcid.vpc_id
 
 - debug:
     var: vpc.vpc.id
-    
+
 - name: associate subnet to the VPC
   ec2_vpc_subnet:
     state: present
@@ -55,9 +55,9 @@
 - debug:
     var: subnet
 
-- debug: 
+- debug:
     var: subnet.subnet.id
-- debug: 
+- debug:
     var: subnet.subnet.vpc_id
 
 - name: create IGW
@@ -69,9 +69,9 @@
       Name: "{{ igw_name }}"
   register: igw
 
-- debug: 
+- debug:
     var: igw
-- debug: 
+- debug:
     var: igw.vpc_id
 
 - name: Route IGW
@@ -110,11 +110,11 @@
 - debug:
     var: security_group
 
-- debug: 
+- debug:
     var: security_group.group_id
-- debug: 
+- debug:
     var: security_group.group_name
-- debug: 
+- debug:
     var: security_group.vpc_id
 
 
@@ -166,7 +166,7 @@
   tags:
     - ec2_key
 
-- debug: 
+- debug:
     var: keypair.key.name
 
 
@@ -176,7 +176,7 @@
   tags:
     - ec2_key
 
-- debug: 
+- debug:
     msg: "KEY ALREADY EXISTS"
   when: keypair.msg == "key pair already exists"
 - debug:
