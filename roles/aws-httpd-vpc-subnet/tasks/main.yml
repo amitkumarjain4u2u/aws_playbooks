@@ -360,6 +360,9 @@
     hostname: "{{ item.public_ip }}"
     groupname: ec2_instance_ips
   with_items: "{{ ec2_instances1.tagged_instances }}"
+  register: ec2ip
+- debug: 
+    var: ec2ip
 
 - name: Wait for servers to come online
   wait_for:
@@ -367,11 +370,14 @@
     port: 22
     timeout: 360
   with_items: "{{ ec2_instances1.tagged_instances }}"
+  register: ec2waitonline
+
+- debug: 
+    var: ec2waitonline
 
 - name: Add EC2 instances as known hosts
   known_hosts:
     name: "{{ item.public_ip }}"
     key: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + item.public_ip) }}"
   with_items: "{{ ec2_instances1.tagged_instances }}"
-
 

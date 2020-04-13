@@ -11,3 +11,6 @@
     region: "{{ item.region }}"
     instance_id: "{{ item.id }}"
   with_items: "{{ ec2_instances1.tagged_instances }}"
+  register: addelb
+- debug: 
+    var: addelb
