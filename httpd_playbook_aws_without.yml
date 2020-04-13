@@ -147,7 +147,7 @@
       with_items: "{{ ec2_instances.tagged_instances }}"
 
 
-- hosts: ec2_instance_ips
+- hosts: all
   remote_user: ec2-user
   become: yes
   become_user: root
@@ -236,7 +236,7 @@
     - ping:
 
 
-- hosts: ec2_instance_ips
+- hosts: all
   remote_user: ec2-user
   become: yes
   become_method: sudo
@@ -263,7 +263,7 @@
 
 
 
-- hosts: localhost
+- hosts: all
   vars:
     application: httpd
     machine_counts: 3
