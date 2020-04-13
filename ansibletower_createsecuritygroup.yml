@@ -1,6 +1,5 @@
 ---
 - hosts: localhost
-  remote_user: ansible
   become: true
   become_method: sudo
   #become_user: root
