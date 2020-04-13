@@ -1,0 +1,49 @@
+---
+- hosts: all
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    application: httpd
+    machine_counts: 3
+    region: us-east-1
+    keypair_name: ec2_key_pair
+    cal: "ami-00fc224d9834053d6"
+    ore: "ami-087c2c50437d0b80d"
+    mum: "ami-0a74bfeb190bd404f"
+    verg: "ami-0c322300a1dd5dc79"
+    ec2_key_directory_ansible: "/home/ansible/pdauto/"
+    keyowner: ansible
+  tasks:
+    - name: Get my current IP address
+      uri:
+        url: http://checkip.amazonaws.com/
+        return_content: yes
+      register: my_ip
+
+    - debug:
+        var: my_ip
+    - pip: 
+        name: boto
+    - pip: 
+        name: boto3 
+    - name: Create simple security group
+      ec2_group:
+        name: webservers1
+        description: A security group for my current IP
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: "{{ my_ip.content | replace('\n', '') }}/32"
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: "{{ my_ip.content | replace('\n', '') }}/32"
+        rules_egress:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+      register: webserversgroup1
+    - debug:
+        var: webserversgroup1
