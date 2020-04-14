@@ -1,5 +1,4 @@
 ---
-- hosts: localhost
-  connection: local
-  roles:
-    - { role: ec2-down }
+- name: AMIT KUMAR JAIN
+    roles:
+       - { role: ec2-down }
