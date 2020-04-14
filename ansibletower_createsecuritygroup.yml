@@ -3,6 +3,18 @@
   vars:
     region: us-west-1
   tasks:
+    - name: Get my current IP address
+      uri:
+        url: http://checkip.amazonaws.com/
+        return_content: yes
+      register: my_ip
+
+    - debug:
+        var: my_ip
+    - pip: 
+        name: boto
+    - pip: 
+        name: boto3
     - name: Create simple security group
       ec2_group:
         name: webservers1
