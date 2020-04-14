@@ -1,0 +1,40 @@
+---
+# tasks file for ec2_terminate
+- name: Gather EC2 facts for deletion
+  ec2_instance_facts:
+    region: "{{ region }}"
+  register: ec2
+- debug:
+    var: ec2
+
+#- debug:
+ #   var: ec2.instances[0].state.name
+
+#- debug:
+ #   var: ec2.instances[0].network_interfaces[0].vpc_id
+
+- name: Terminate EC2 Instance(s)
+  ec2:
+     instance_ids: '{{ item.instance_id }}'
+     state: absent
+     region: "{{ region }}"
+  with_items: "{{ ec2.instances }}"
+#  when: ec2.instances[0].network_interfaces[0].status == "in-use" and ec2.instances[0].state == "running"
+  register: insttermresults
+- debug:
+    var: insttermresults
+
+- pause:
+    minutes: 1
+
+
+- debug:
+    var: insttermresults.instances[0].state.name
+#  when: insttermresults.instances[0].state == "running"
+
+- debug:
+    var: insttermresults.instances[0].network_interfaces[0].vpc_id
+ # when: insttermresults.instances[0].state == "running"
+
+
+

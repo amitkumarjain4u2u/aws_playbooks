@@ -1,0 +1,3 @@
+---
+# vars file for ec2_terminate
+region: us-east-1

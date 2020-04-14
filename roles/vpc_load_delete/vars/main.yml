@@ -1,0 +1,20 @@
+---
+# vars file for vpc_load_delete
+region: us-east-1
+keypair_name: ec2_key_pair
+keyowner: ansible
+ansible_python_interpreter: /usr/bin/python3
+application: httpd
+application1: nginx
+vpc_name: "Ansible VPC3"
+vpc_cidr: 10.10.0.0/24
+securitygroup_name: "Web DMZ"
+securitygroup_desc: "DMZ Security Group"
+#route table name
+route_name: "Public Ansible"
+igw_name: "Traffic IGW"
+#vpcdelete: vpc-06dae113d3e7cd52f
+# Subnet
+subnet_name: "Ansible Subnet"
+subnet_cidr: 10.10.0.0/26
+

@@ -1,4 +1,8 @@
 ---
+# tasks file for vpc_load_delete
+- pause:
+    minutes: 1
+
 - name: collecting vpc id from aws instance
   ec2_vpc_net_info:
     region: "{{ region }}"
@@ -8,46 +12,10 @@
 - debug:
     var: vpcresults
 
-- debug: 
+- debug:
     var: vpcresults.vpcs[0].vpc_id
   when: vpcresults.vpcs[0].tags.Name == "{{ vpc_name }}"
 
-# tasks file for ec2-down
-- name: Gather EC2 facts for deletion
-  ec2_instance_facts:
-    region: "{{ region }}"
-  register: ec2
-- debug: 
-    var: ec2
-
-#- debug: 
- #   var: ec2.instances[0].state.name
-
-#- debug: 
- #   var: ec2.instances[0].network_interfaces[0].vpc_id
-
-- name: Terminate EC2 Instance(s)
-  ec2:
-     instance_ids: '{{ item.instance_id }}'
-     state: absent
-     region: "{{ region }}"
-  with_items: "{{ ec2.instances }}"
-#  when: ec2.instances[0].network_interfaces[0].status == "in-use" and ec2.instances[0].state == "running"
-  register: insttermresults
-- debug: 
-    var: insttermresults
-
-- pause: 
-    minutes: 1
-
-
-- debug:
-    var: insttermresults.instances[0].state.name
-#  when: insttermresults.instances[0].state == "running"
-
-- debug:
-    var: insttermresults.instances[0].network_interfaces[0].vpc_id
- # when: insttermresults.instances[0].state == "running"
 
 
 - name: Deleting load balancer from a region
@@ -56,7 +24,7 @@
     state: absent
     region: "{{ region }}"
   register: deleteelb
-- debug: 
+- debug:
     var: deleteelb
 
 - pause:
@@ -79,7 +47,7 @@
     state: absent
   register: delkey
 
-- debug: 
+- debug:
     var: delkey
 
 
@@ -90,7 +58,7 @@
       region: "{{ region }}"
       state: absent
   register: delsg
-- debug: 
+- debug:
     var: delsg
 
 
@@ -151,3 +119,4 @@
   register: vpcdeleted
 - debug:
     var: vpcdeleted
+
