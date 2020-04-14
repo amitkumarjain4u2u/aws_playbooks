@@ -1,4 +1,5 @@
 ---
-- name: AMIT KUMAR JAIN
-    roles:
-       - { role: ec2-down }
+- hosts: localhost
+  connection: local
+  roles: 
+    - ec2-down
