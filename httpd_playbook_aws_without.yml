@@ -11,7 +11,7 @@
     mum: "ami-0a74bfeb190bd404f"
     verg: "ami-0c322300a1dd5dc79"
     ec2_key_directory_ansible: "/home/ansible/pdauto/"
-    keyowner: ansible
+    keyowner: ec2-user
   tasks:
     - name: Get my current IP address
       uri:
