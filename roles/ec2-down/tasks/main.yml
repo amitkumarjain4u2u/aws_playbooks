@@ -7,18 +7,36 @@
 - debug: 
     var: ec2
 
-- debug: 
-    var: ec2.instances[0].state.name
-    
+#- debug: 
+ #   var: ec2.instances[0].state.name
+
+#- debug: 
+ #   var: ec2.instances[0].network_interfaces[0].vpc_id
+
 - name: Terminate EC2 Instance(s)
   ec2:
      instance_ids: '{{ item.instance_id }}'
      state: absent
      region: "{{ region }}"
   with_items: "{{ ec2.instances }}"
+#  when: ec2.instances[0].network_interfaces[0].status == "in-use" and ec2.instances[0].state == "running"
   register: insttermresults
 - debug: 
     var: insttermresults
+
+- pause: 
+    minutes: 1
+
+
+- debug:
+    var: insttermresults.instances[0].state.name
+#  when: insttermresults.instances[0].state == "running"
+
+- debug:
+    var: insttermresults.instances[0].network_interfaces[0].vpc_id
+ # when: insttermresults.instances[0].state == "running"
+
+
 - name: Deleting load balancer from a region
   ec2_elb_lb:
     name: "{{ application }}-load-balancer"
@@ -27,6 +45,19 @@
   register: deleteelb
 - debug: 
     var: deleteelb
+
+- pause:
+    minutes: 1
+
+
+- name: Deleting load balancer from a region
+  ec2_elb_lb:
+    name: "{{ application1 }}-load-balancer"
+    state: absent
+    region: "{{ region }}"
+  register: deleteelb1
+- debug:
+    var: deleteelb1
 
 - name: remove key pair by name
   ec2_key:
@@ -37,6 +68,7 @@
 
 - debug: 
     var: delkey
+
 
 - name: Remove SG
   ec2_group:
@@ -49,9 +81,11 @@
     var: delsg
 
 
+
 - name: delete route table
   ec2_vpc_route_table:
-    vpc_id: "{{ vpciddelete }}"
+#    vpc_id: "{{ insttermresults.instances[0].network_interfaces[0].vpc_id }}"
+    vpc_id: "{{ vpcdelete }}"
     region: "{{ region }}"
     state: absent
     tags:
@@ -60,20 +94,11 @@
 - debug:
     var: delroutetable
 
-#- name: delete route table
- # ec2_vpc_route_table:
-  #  vpc_id: "{{ vpciddelete }}"
-   # region: "{{ region }}"
-    #route_table_id: rtb-0894dd4657831d891
-   # lookup: id
-   # state: absent
-  #register: deleterouteid
-#- debug:
- #   var: deleterouteid
 
 - name: deleting internet gateway
   ec2_vpc_igw:
-    vpc_id: "{{ vpciddelete }}"
+ #   vpc_id: "{{ insttermresults.instances[0].network_interfaces[0].vpc_id }}"
+    vpc_id: "{{ vpcdelete }}"
     region: "{{ region }}"
     state: absent
     tags:
@@ -83,17 +108,22 @@
 - debug:
     var: igwdeleted
 
-- name: Remove subnet for database servers
+- name: Remove subnet
   ec2_vpc_subnet:
     state: absent
-    vpc_id: "{{ vpciddelete }}"
+  #  vpc_id: "{{ insttermresults.instances[0].network_interfaces[0].vpc_id }}"
+    vpc_id: "{{ vpcdelete }}"
     cidr: "{{ subnet_cidr }}"
     region: "{{ region }}"
+    map_public: yes
     resource_tags:
       Name: "{{ subnet_name }}"
   register: delsubnet
 - debug:
     var: delsubnet
+
+
+
 
 
 - name: Delete nondefault VPC

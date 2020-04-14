@@ -345,6 +345,7 @@
     region: "{{ region }}"
     group_id: "{{ security_group.group_id }}"
     vpc_subnet_id: "{{ subnet.subnet.id }}"
+#    instance_profile_name: "{{ application }}"
     instance_tags:
       application: "{{ application }}"
     exact_count: "{{ machine_counts }}"
