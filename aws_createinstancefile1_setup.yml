@@ -16,6 +16,7 @@
 
     - openssh_keypair:
         path: /home/ansible/.ssh/id_rsa
+        force: True
       delegate_to: localhost
       run_once: true
 
