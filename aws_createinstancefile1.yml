@@ -145,3 +145,9 @@
         name: "{{ item.public_ip }}"
         key: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + item.public_ip) }}"
       with_items: "{{ ec2_instances.tagged_instances }}"
+      
+    - name: pint content of key
+      command: cat /home/ansible/pdauto/ec2_key_pair.pem
+      register: keycontent
+    - debug: 
+        var: keycontent
