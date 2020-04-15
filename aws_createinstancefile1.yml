@@ -115,6 +115,15 @@
         wait: yes
         instance_type: t2.micro
         region: "{{ region }}"
+        user_data: |
+                   #!/bin/sh
+		               sudo yum update -y
+                   sudo yum install httpd -y
+		               sudo systemctl enable httpd
+		               sudo systemctl start httpd
+		               sudo echo "Hi ec2-user from {{ ansible_hostname }}" >> /var/www/html/index.html
+		               sudo echo "<h1>Hi ec2-user from {{ ansible_hostname }}</h1>" >> /var/www/html/index.html
+                   sudo systemctl restart httpd	
         group_id:
           - "{{ webserversgroup1.group_id }}"
           - "{{ elb.elb.security_group_ids | first }}"
