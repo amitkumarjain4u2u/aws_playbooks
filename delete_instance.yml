@@ -91,6 +91,8 @@
       register: deleteelb1
     - debug:
         var: deleteelb1
+    - pause: 
+        minutes: 1
     
     - name: remove key pair by name
       ec2_key:
