@@ -150,10 +150,11 @@
       command: cat /home/ansible/pdauto/ec2_key_pair.pem
       register: keycontent
     - debug: 
-        var: keycont- pip:
-         name: boto
+        var: keycont
+    - pip:
+        name: boto
     - pip: 
-         name: boto3
+        name: boto3
     - name: Add each EC2 instance to the ELB
       ec2_elb:
           state: present
