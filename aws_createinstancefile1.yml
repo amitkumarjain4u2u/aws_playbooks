@@ -146,21 +146,10 @@
         key: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + item.public_ip) }}"
       with_items: "{{ ec2_instances.tagged_instances }}"
       
-    - name: pint content of key
+    - name: print content of key
       command: cat /home/ansible/pdauto/ec2_key_pair.pem
       register: keycontent
     - debug: 
         var: keycontent
-    - pip:
-        name: boto
-    - pip: 
-        name: boto3
-    - name: Add each EC2 instance to the ELB
-      ec2_elb:
-          state: present
-          ec2_elbs: "{{ application }}-load-balancer"
-          region: "{{ item.region }}"
-          instance_id: "{{ item.id }}"
-      with_items: "{{ ec2_instances.tagged_instances }}"
     
     
