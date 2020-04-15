@@ -150,7 +150,7 @@
       command: cat /home/ansible/pdauto/ec2_key_pair.pem
       register: keycontent
     - debug: 
-        var: keycont
+        var: keycontent
     - pip:
         name: boto
     - pip: 
@@ -161,6 +161,6 @@
           ec2_elbs: "{{ application }}-load-balancer"
           region: "{{ item.region }}"
           instance_id: "{{ item.id }}"
-      with_items: "{{ ec2_instances.tagged_instances }}"ent
+      with_items: "{{ ec2_instances.tagged_instances }}"
     
     
