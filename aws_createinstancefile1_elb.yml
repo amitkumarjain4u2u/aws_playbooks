@@ -20,4 +20,4 @@
           ec2_elbs: "{{ application }}-load-balancer"
           region: "{{ item.region }}"
           instance_id: "{{ item.id }}"
-       with_items: "{{ ec2_instances.tagged_instances }}"
+       with_items: "{{ ec2_instances.instances }}"
