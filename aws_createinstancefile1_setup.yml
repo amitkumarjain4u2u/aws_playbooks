@@ -1,4 +1,4 @@
-- hosts: amitawsadmin_useast_virgenia
+- hosts: localhost
   vars:
     passwd: ansible
     usr: ansible
@@ -81,7 +81,7 @@
         var: check_python3
     - ping:
 
-- hosts: amitawsadmin_useast_virgenia
+- hosts: localhost
   tasks:
     - name: Install httpd
       yum:
