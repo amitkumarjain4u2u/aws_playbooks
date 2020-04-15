@@ -81,3 +81,23 @@
         var: check_python3
     - ping:
 
+- hosts: ec2_instance_ips
+  tasks:
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: latest
+    - name: Restart httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    - name: Create default index page
+      copy:
+        dest: /var/www/html/index.html
+        content: "Hi ec2-user from {{ ansible_hostname }}"
+    - name: Restart httpd
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
