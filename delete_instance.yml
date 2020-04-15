@@ -39,7 +39,7 @@
         region: "{{ region }}"
       register: ec2
     - debug: 
-      var: ec2
+        var: ec2
 
 #- debug: 
  #   var: ec2.instances[0].state.name
