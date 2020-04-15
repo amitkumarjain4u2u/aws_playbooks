@@ -10,8 +10,8 @@
     ore: "ami-087c2c50437d0b80d"
     mum: "ami-0a74bfeb190bd404f"
     verg: "ami-0c322300a1dd5dc79"
-    #ec2_key_directory_ansible: "/home/ansible/pdauto/"
-    ec2_key_directory_ansible: "/tmp/"
+    ec2_key_directory_ansible: "/home/ansible/pdauto/"
+    #ec2_key_directory_ansible: "/tmp/"
     keyowner: ansible
   tasks:
     - name: Get my current IP address
@@ -149,7 +149,7 @@
       with_items: "{{ ec2_instances.tagged_instances }}"
       
     - name: print content of key
-      command: cat /tmp/ec2_key_pair.pem
+      command: cat /home/ansible/pdauto/ec2_key_pair.pem
       register: keycontent
     - debug: 
         var: keycontent
