@@ -1,4 +1,4 @@
-- hosts: ec2_instance_ips
+- hosts: localhost
   vars:
     passwd: ansible
     usr: ansible
@@ -81,7 +81,7 @@
         var: check_python3
     - ping:
 
-- hosts: ec2_instance_ips
+- hosts: localhost
   tasks:
     - name: Install httpd
       yum:
