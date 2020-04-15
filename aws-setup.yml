@@ -1,4 +1,4 @@
-- hosts: ec2_instance_ips
+- hosts: ec2_instance_ips,localhost
   remote_user: ec2-user
   become: yes
   become_user: root
