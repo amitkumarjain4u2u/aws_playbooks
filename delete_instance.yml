@@ -1,5 +1,5 @@
 ---
-- hosts: local
+- hosts: localhost
   vars:
     region: us-east-1
     keypair_name: ec2_key_pair
