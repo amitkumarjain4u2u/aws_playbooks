@@ -1,4 +1,4 @@
-- hosts: ec2_instance_ips
+- hosts: all
   tasks:
     - name: Install httpd
       yum:
