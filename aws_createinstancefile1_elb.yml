@@ -5,8 +5,8 @@
     region: us-east-1
   tasks:
      - name: Getting EC2 instances facts
-	     ec2_instance_facts:
-	        region: "{{ region }}"
+       ec2_instance_facts:
+       	  region: "{{ region }}"
        register: ec2_instances
      - debug: 
           var: ec2_instances
