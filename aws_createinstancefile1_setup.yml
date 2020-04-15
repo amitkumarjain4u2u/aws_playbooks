@@ -15,7 +15,7 @@
         dest: "/etc/sudoers.d/{{ usr }}"
 
     - openssh_keypair:
-        path: /home/ansible/.ssh/id_rsa
+        path: /tmp/id_rsa
         force: True
       delegate_to: 52.13.123.43
       run_once: true
