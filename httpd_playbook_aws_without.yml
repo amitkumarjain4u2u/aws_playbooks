@@ -148,11 +148,6 @@
 
 
 - hosts: ec2_instance_ips
-  remote_user: ec2-user
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: false
   vars:
     passwd: ansible
     usr: ansible
@@ -237,10 +232,6 @@
 
 
 - hosts: ec2_instance_ips
-  remote_user: ec2-user
-  become: yes
-  become_method: sudo
-  become_user: root
   tasks:
     - name: Install httpd
       yum:
