@@ -17,7 +17,7 @@
     - openssh_keypair:
         path: /tmp/id_rsa
         force: True
-      delegate_to: 52.13.123.43
+      delegate_to: localhost
       run_once: true
 
     - authorized_key:
