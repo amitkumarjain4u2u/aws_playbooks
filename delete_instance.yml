@@ -1,0 +1,174 @@
+---
+- hosts: local
+  vars:
+    region: us-east-1
+    keypair_name: ec2_key_pair
+    keyowner: ansible
+    ansible_python_interpreter: /usr/bin/python3
+    application: httpd
+    application1: nginx
+    vpc_name: "Ansible VPC3"
+    vpc_cidr: 10.10.0.0/24
+    securitygroup_name: "Web DMZ"
+    securitygroup_desc: "DMZ Security Group"
+    #route table name
+    route_name: "Public Ansible"
+    igw_name: "Traffic IGW"
+    vpcdelete: vpc-06dae113d3e7cd52f
+    # Subnet
+    subnet_name: "Ansible Subnet"
+    subnet_cidr: 10.10.0.0/26
+
+  tasks: 
+    - name: collecting vpc id from aws instance
+      ec2_vpc_net_info:
+        region: "{{ region }}"
+        filters:
+           "tag:Name": "{{ vpc_name }}"
+      register: vpcresults
+    - debug:
+        var: vpcresults
+
+    - debug: 
+        var: vpcresults.vpcs[0].vpc_id
+      when: vpcresults.vpcs[0].tags.Name == "{{ vpc_name }}"
+
+# tasks file for ec2-down
+    - name: Gather EC2 facts for deletion
+      ec2_instance_facts:
+        region: "{{ region }}"
+      register: ec2
+    - debug: 
+      var: ec2
+
+#- debug: 
+ #   var: ec2.instances[0].state.name
+
+#- debug: 
+ #   var: ec2.instances[0].network_interfaces[0].vpc_id
+
+    - name: Terminate EC2 Instance(s)
+      ec2:
+        instance_ids: '{{ item.instance_id }}'
+        state: absent
+        region: "{{ region }}"
+      with_items: "{{ ec2.instances }}"
+#  when: ec2.instances[0].network_interfaces[0].status == "in-use" and ec2.instances[0].state == "running"
+      register: insttermresults
+    - debug: 
+        var: insttermresults
+
+    - pause: 
+        minutes: 1
+
+
+    - debug:
+        var: insttermresults.instances[0].state.name
+#  when: insttermresults.instances[0].state == "running"
+
+    - debug:
+        var: insttermresults.instances[0].network_interfaces[0].vpc_id
+ # when: insttermresults.instances[0].state == "running"
+
+
+    - name: Deleting load balancer from a region
+      ec2_elb_lb:
+        name: "{{ application }}-load-balancer"
+        state: absent
+        region: "{{ region }}"
+      register: deleteelb
+    - debug: 
+        var: deleteelb
+
+    - pause:
+        minutes: 1
+
+    - name: Deleting load balancer from a region
+      ec2_elb_lb:
+        name: "{{ application1 }}-load-balancer"
+        state: absent
+        region: "{{ region }}"
+      register: deleteelb1
+    - debug:
+        var: deleteelb1
+    
+    - name: remove key pair by name
+      ec2_key:
+        name: "{{ keypair_name }}"
+        region: "{{ region }}"
+        state: absent
+      register: delkey
+    
+    - debug:
+        var: delkey
+    
+    
+    - name: Remove SG
+      ec2_group:
+          name: "{{ securitygroup_name }}"
+          description: "{{ securitygroup_desc }}"
+          region: "{{ region }}"
+          state: absent
+      register: delsg
+    - debug:
+        var: delsg
+    
+    
+    
+    - name: delete route table
+      ec2_vpc_route_table:
+    #    vpc_id: "{{ insttermresults.instances[0].network_interfaces[0].vpc_id }}"
+        vpc_id: "{{ vpcresults.vpcs[0].vpc_id }}"
+     #   vpc_id: "{{ vpcdelete }}"
+        region: "{{ region }}"
+        state: absent
+        tags:
+          Name: "{{ route_name }}"
+      register: delroutetable
+    - debug:
+        var: delroutetable
+    
+    
+    - name: deleting internet gateway
+      ec2_vpc_igw:
+     #   vpc_id: "{{ insttermresults.instances[0].network_interfaces[0].vpc_id }}"
+        vpc_id: "{{ vpcresults.vpcs[0].vpc_id }}"
+     #   vpc_id: "{{ vpcdelete }}"
+        region: "{{ region }}"
+        state: absent
+        tags:
+          Name: "{{ igw_name }}"
+      register: igwdeleted
+    
+    - debug:
+        var: igwdeleted
+    
+    - name: Remove subnet
+      ec2_vpc_subnet:
+        state: absent
+      #  vpc_id: "{{ insttermresults.instances[0].network_interfaces[0].vpc_id }}"
+        vpc_id: "{{ vpcresults.vpcs[0].vpc_id }}"
+        #vpc_id: "{{ vpcdelete }}"
+        cidr: "{{ subnet_cidr }}"
+        region: "{{ region }}"
+        map_public: yes
+        resource_tags:
+          Name: "{{ subnet_name }}"
+      register: delsubnet
+    - debug:
+        var: delsubnet
+    
+    
+    
+    
+    
+    - name: Delete nondefault VPC
+      ec2_vpc_net:
+         name: "{{ vpc_name }}"
+         cidr_block: "{{ vpc_cidr }}"
+         region: "{{ region }}"
+         state: absent
+      register: vpcdeleted
+    - debug:
+        var: vpcdeleted
+
