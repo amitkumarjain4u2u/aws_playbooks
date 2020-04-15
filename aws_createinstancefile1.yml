@@ -126,7 +126,8 @@
 
     - debug:
         var: ec2_instances
-
+    - debug:
+        var: ec2_instances.tagged_instances
     - name: Store EC2 instance IPs to provision against
       add_host:
         hostname: "{{ item.public_ip }}"
