@@ -1,0 +1,16 @@
+---
+# group_vars/all.yml
+ 
+image: ami-0c322300a1dd5dc79
+subnet: subnet-0779fe4a
+region: us-east-1
+zone: us-east-1b
+keypair: abc
+security_groups: abc
+instance_type: t2.micro
+
+volumes:
+  - device_name: /dev/xvda
+    device_type: gp2
+    volume_size: 8 # size of the root disk
+    delete_on_termination: true
