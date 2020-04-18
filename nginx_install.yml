@@ -1,0 +1,28 @@
+---
+- hosts: redhat
+  tasks:
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: present
+    - yum: 
+        name: firewalld
+        state: present
+    - service: 
+        name: firewalld
+        state: started
+        enabled: true
+    - firewalld: 
+        service: http
+        state: enabled
+        immediate: true
+        permanent: true
+    - name: Create default index page
+      copy:
+        dest: /usr/share/nginx/html/index.html
+        content: "Hi ec2user from {{ ansible_hostname }} nginx installed successfully"
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+

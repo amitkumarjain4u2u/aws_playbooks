@@ -1,0 +1,26 @@
+---
+- hosts: redhat
+  tasks: 
+    - yum:
+        name: httpd
+        state: latest
+    - yum:
+        name: firewalld
+        state: latest
+    - service: 
+        name: firewalld
+        state: started
+        enabled: true
+    - firewalld: 
+        service: http
+        state: enabled
+        immediate: true
+        permanent: true
+    - name: Create default index page
+      copy:
+        dest: /var/www/html/index.html
+        content: "Hi ec2-user from {{ ansible_hostname }}"
+    - service:
+        name: httpd
+        state: started
+        enabled: true
