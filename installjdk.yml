@@ -1,0 +1,11 @@
+---
+- hosts: redhat
+  become: true
+  vars:
+   download_url: http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.rpm
+  
+  tasks:
+  - name: Download JDK 8 RPM file
+    command: "wget --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{download_url}} "
+  - name: Install JDK 8
+    command: "rpm -ivh jdk-8u181-linux-x64.rpm"

@@ -1,0 +1,22 @@
+---
+- hosts: redhat
+  tasks:
+  - name: Date and Time Example in Ansible
+    debug:
+     var=ansible_date_time.date
+
+
+- hosts: redhat
+  tasks:
+  - name: Date and Time Example in Ansible
+    debug:
+     var=ansible_date_time.time
+ 
+
+- hosts: redhat
+  tasks:
+  - name: Ansible timestamp filename example
+    command: touch niranjan{{ansible_date_time.date}}.log
+    register: timefile
+  - debug:
+      var: timefile

@@ -1,0 +1,26 @@
+---
+- hosts: redhat
+  tasks:
+  - name: Install Package
+    yum: name=httpd state=present
+    register: packagehttpd
+  - debug: 
+      var: packagehttpd
+  - name: Start httpd service
+    service: name=httpd state=started
+    register: servicehttpd
+  - debug: 
+      var: servicehttpd
+  - name: Start httpd service
+    service: name=httpd state=stopped
+    register: servicehttpd
+  - debug:
+      var: servicehttpd
+  - name: Install Package
+    yum: name=httpd state=absent
+    register: packagehttpd
+  - debug:
+      var: packagehttpd
+
+
+

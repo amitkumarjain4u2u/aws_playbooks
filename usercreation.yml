@@ -1,0 +1,12 @@
+---
+- hosts: redhat
+  tasks:
+  - name: Create User
+    user: 
+      name: amit 
+      password: amit 
+      groups: ansible 
+      shell: /bin/bash
+    register: usercreated
+  - debug: 
+      var: usercreated

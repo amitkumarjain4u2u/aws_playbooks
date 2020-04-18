@@ -1,0 +1,10 @@
+- hosts: redhat
+  tasks:
+  - name: Replace example
+    replace:
+      path: /home/ansible/amit.txt
+      regexp: 'hello'
+      replace: "world"
+    register: replacecontent
+  - debug: 
+      var: replacecontent

@@ -1,0 +1,12 @@
+---
+- hosts: redhat
+  tasks:
+  - name: Remove User
+    user:
+      name: amit
+      state: absent 
+      remove: yes 
+      force: yes
+    register: userremoved
+  - debug:
+      var: userremoved

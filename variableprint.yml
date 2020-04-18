@@ -1,0 +1,23 @@
+---
+- hosts: redhat
+  vars:
+    name1: niranjan
+  tasks:
+    - name: Ansible Basic Variable Example
+      debug:
+        msg: "{{ name1 }}"
+
+
+- hosts: redhat
+  vars:
+    name1:
+      - Vasudevamurthy
+      - Niranjan
+  tasks:
+    - name: Ansible Array Example
+      debug:
+        msg: "{{ name1[1] }}"
+    - name: Ansible Array Example
+      debug:
+        msg: "{{ name1[0] }}"
+

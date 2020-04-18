@@ -1,0 +1,8 @@
+---
+- hosts: redhat
+  tasks:
+  - name: Install Package
+    yum: name=vim,git state=latest
+    register: installpackage
+  - debug: 
+      var: installpackage

@@ -1,0 +1,38 @@
+---
+- hosts: redhat
+  tasks:
+  - name: Ansible zip file example
+    archive:
+     path: /home/ansible/amit.txt
+     dest: /home/ansible/amit.zip
+     format: zip
+    register: zipcreated
+  - debug:
+      var: zipcreated
+
+
+- hosts: redhat
+  tasks:
+  - name: Ansible zip multiple files example
+    archive:
+      path:
+        - /home/ansible/niranjan1.txt
+        - /home/ansible/niranjan2.txt
+      dest: /home/ansible/niranjan.zip
+      format: zip
+    register: zipcreated1
+  - debug:
+      var: zipcreated1
+
+
+- hosts: redhat
+  tasks:
+  - name: Ansible zip directory example
+    archive:
+     path:
+      - /home/ansible
+     dest: /home/ansible/niranjan1.zip
+     format: zip
+    register: zipcreated2
+  - debug:
+      var: zipcreated2
