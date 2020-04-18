@@ -1,0 +1,250 @@
+---
+# tasks file for aws_vpc_subnet
+- name: Get my current IP address
+  uri:
+    url: http://checkip.amazonaws.com/
+    return_content: yes
+  register: my_ip
+
+- debug:
+    var: my_ip
+
+- debug:
+    var: my_ip.content
+- pip:
+    name: boto
+- pip:
+    name: boto3
+
+- name: create VPC
+  ec2_vpc_net:
+     name: "{{ vpc_name }}"
+     cidr_block: "{{ vpc_cidr }}"
+     region: "{{ region }}"
+     state: present
+  register: vpc
+
+- debug:
+    var: vpc
+
+- name: Set VPC ID in variable
+  set_fact:
+    vpc_id: "{{ vpc.vpc.id }}"
+
+  register: vpcid
+
+- debug:
+    var: vpcid
+- debug:
+    var: vpcid.ansible_facts.vpc_id
+
+- debug:
+    var: vpc.vpc.id
+- debug:
+    var: vpc.vpc.id
+
+- debug:
+    var: vpc.vpc.cidr_block
+
+- debug:
+    var: vpc.vpc.cidr_block_association_set[0].association_id
+
+- debug:
+    var: vpc.vpc.tags.Name
+
+- name: associate subnet to the VPC
+  ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    cidr: "{{ subnet_cidr }}"
+    map_public: yes
+    resource_tags:
+      Name: "{{ subnet_name }}"
+  register: subnet
+
+- debug:
+    var: subnet
+
+- debug:
+    var: subnet.subnet.id
+- debug:
+    var: subnet.subnet.vpc_id
+
+- debug:
+    var: subnet.subnet.cidr_block
+
+- debug:
+    var: subnet.subnet.id
+
+- debug:
+    var: subnet.subnet.tags.Name
+
+- debug:
+    var: subnet.subnet.vpc_id
+
+
+- name: create IGW
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    state: "present"
+    tags:
+      Name: "{{ igw_name }}"
+  register: igw
+
+- debug:
+    var: igw
+- debug:
+    var: igw.vpc_id
+- debug:
+    var: igw.gateway_id
+
+- debug:
+    var: igw.tags.Name
+
+- debug:
+    var: igw.vpc_id
+
+
+- name: Route IGW
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    subnets:
+      - "{{ subnet.subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id  }}"
+    tags:
+      Name: "{{ route_name }}"
+  register: rigw
+
+- debug:
+    var: rigw
+
+- debug:
+    var: rigw.route_table.associations[0].route_table_association_id
+
+- debug:
+    var: rigw.route_table.associations[0].route_table_id
+
+- debug:
+    var: rigw.route_table.associations[0].subnet_id
+
+- debug:
+    var:  rigw.route_table.id
+
+- debug:
+    var:  rigw.route_table.route_table_id
+
+- debug:
+    var:  rigw.route_table.routes[0].destination_cidr_block
+
+- debug:
+    var:  rigw.route_table.routes[0].gateway_id
+
+- debug:
+    var:  rigw.route_table.routes[1].destination_cidr_block
+
+- debug:
+    var:  rigw.route_table.routes[1].gateway_id
+
+- debug:
+    var: rigw.route_table.tags.Name
+
+- debug:
+    var: rigw.route_table.vpc_id
+
+
+
+- name: Create Security Group
+  ec2_group:
+    name: Web DMZ
+    description: DMZ Security Group
+    vpc_id: "{{ vpc.vpc.id }}"
+    region: "{{ region }}"
+    rules:
+      - proto: tcp
+        ports:
+        - 80
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        ports:
+        - 22
+        cidr_ip: 0.0.0.0/0
+  register: security_group
+
+- debug:
+    var: security_group
+
+- debug:
+    var: security_group.group_id
+- debug:
+    var: security_group.group_name
+- debug:
+    var: security_group.vpc_id
+
+
+- name: Create the ELB only listening over port 80
+  ec2_elb_lb:
+    name: "{{ application }}-load-balancer"
+    region: "{{ region }}"
+#    vpc_id: "{{ security_group.vpc_id }}"
+    security_group_ids: "{{ security_group.group_id }}"
+    subnets: "{{ subnet.subnet.id }}"
+    #cross_az_load_balancing: "yes"
+    state: present
+#    zones:
+ #     - "{{ region }}a"
+  #    - "{{ region }}b"
+   #   - "{{ region }}c"
+    #  - "{{ region }}d"
+     # - "{{ region }}e"
+      #- "{{ region }}f"
+    listeners:
+      - protocol: http
+        load_balancer_port: 80
+        instance_port: 80
+  register: elb
+
+- debug:
+    var: elb
+
+- debug:
+    var: elb.elb.dns_name
+- debug:
+    var: elb.elb.hosted_zone_name
+- debug:
+    var: elb.elb.name
+- debug:
+    var: elb.elb.security_group_ids
+- debug:
+    var: elb.elb.dns_name
+- debug:
+    var: elb.elb.instance_health[0].instance_id
+- debug:
+    var: elb.elb.instance_health[0].state
+- debug:
+    var: elb.elb.instance_health[1].instance_id
+- debug:
+    var: elb.elb.instance_health[1].state
+- debug:
+    var: elb.elb.instance_health[2].instance_id
+- debug:
+    var: elb.elb.instance_health[2].state
+
+- debug:
+    var: elb.elb.instances[0]
+- debug:
+    var: elb.elb.instances[1]
+- debug:
+    var: elb.elb.instances[2]
+- debug:
+    var: elb.elb.scheme
+- debug:
+    var: elb.elb.subnets
+- debug:
+    var: elb.elb.zones
+
+

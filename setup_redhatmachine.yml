@@ -97,4 +97,9 @@
         name: boto3
     - pip:
         name: botocore
-
+    - yum: 
+        name: '*'
+        state: latest
+    - yum: 
+        name: "@Development Tools"
+        state: present
